@@ -39,12 +39,45 @@ docker run -it --rm `
 - Image tagged as `taxi_ingest:v001`
 - `docker build --no-cache` needed when dependency changes aren't picked up from cache
 
-## Current Issue — UNRESOLVED
-- Ingest container ran but wrote 0 rows to Postgres
-- `\dt` in pgcli shows empty database
-- Container exited silently — need to scroll up in terminal for error output
-- **Next session: debug why ingest_data.py failed silently inside Docker**
+## Previous Issue — RESOLVED (Session 4)
+- Root cause: `ENV PATH="./code/.venv/bin:$PATH"` in Dockerfile used a relative path
+- At runtime, WORKDIR is `/code`, so `./code/.venv/bin` resolved to `/code/code/.venv/bin` — nonexistent
+- Python fell back to the system Python, which lacked `click`/`sqlalchemy`/`tqdm` → silent crash on import
+- Fix: changed to `ENV PATH="/code/.venv/bin:$PATH"` (absolute path)
+
+---
+
+# Module 01 — Session 4
+**Date: 2026-06-17 | Start: 12:45 | End: 14:30 | Duration: 1h 45m**
+
+## What Was Covered
+
+### Debugging the Silent Ingest Failure
+- The Dockerfile had `ENV PATH="./code/.venv/bin:$PATH"` — a relative path
+- Docker's `ENV` doesn't resolve relative to WORKDIR; at runtime `./code/.venv/bin` → `/code/code/.venv/bin` (doesn't exist)
+- System Python ran instead of the venv Python — `import click` failed immediately, container exited silently
+- Fix: `ENV PATH="/code/.venv/bin:$PATH"` — absolute path so the venv is always found
+- Rebuilt with `docker build --no-cache -t taxi_ingest:v001 .`
+
+### Successful Ingest Run
+- `docker start pgdatabase` — restarted the existing stopped container (no data loss from named volume)
+- Ran ingest via Docker against `pg-network`
+- Result: 1,369,765 rows loaded into `yellow_taxi_trips`
+
+### pgAdmin as Standalone Container
+- `docker run ... --name pgadmin --network=pg-network dpage/pgadmin4`
+- Access at `http://localhost:8085`, login with `admin@admin.com` / `root`
+- Connect to Postgres using container name `pgdatabase` as the host (not `localhost`)
+
+### Docker Compose
+- `docker-compose.yaml` combines Postgres + pgAdmin into a single file
+- `docker compose up` starts both services together
+- Docker Compose auto-creates a network — no need to manually manage `pg-network`
+- Services reach each other by service name (e.g. `pgdatabase`)
+- Network name format: `<foldername>_default` — this project: `learningdataengineering_default`
+- Volumes marked `external: true` to reuse existing named volumes (preserves data)
+- Ingest container must join the Compose network: `--network=learningdataengineering_default`
 
 ## What's Next
-- Debug the silent ingest failure
-- Continue with Docker Compose (running Postgres + pgAdmin together)
+- SQL refresher — join taxi trips with zone lookup table, run aggregation queries in pgAdmin
+- Terraform / GCP setup
