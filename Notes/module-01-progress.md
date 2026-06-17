@@ -19,6 +19,27 @@
 - A pipeline takes data in (CSV) and produces outputs — Parquet file, PostgreSQL, Data Warehouse
 - `sys.argv` lets you pass arguments to a Python script from the terminal (e.g. `python pipeline.py 10`)
 
+## Git Basics
+- `git init` — initialize a new git repository in the current folder
+- `git status` — show what files have changed, what's staged, what's untracked
+- `git add .` — stage all changed files in the current directory for commit
+- `git commit -m "message"` — save a snapshot of staged files with a label
+- A commit is a checkpoint — you can roll back to it if something breaks
+- LF/CRLF warnings on Windows are harmless — just Git converting line endings
+
+## Dockerfile Basics
+- A Dockerfile defines how to build a Docker image for your project
+- `FROM <image>` — base image to start from
+- `RUN <command>` — execute a command during the build (e.g. install packages)
+- `WORKDIR <path>` — set the working directory inside the container
+- `COPY <src> <dest>` — copy files from your machine into the image
+- `ENTRYPOINT ["python", "pipeline.py"]` — the command that runs when the container starts
+- Build with: `docker build -t <name>:<tag> .` — the `.` means use the current folder
+- The `-t` in `docker build` means **tag** (name the image), not terminal
+- `--rm` in `docker run` — auto-delete the container after it exits
+- Always rebuild after changing the Dockerfile — Docker caches old layers
+- Keep the Dockerfile in the same folder as the files it references
+
 ## Terminal — Windows vs Linux
 - Teacher uses Linux/Mac — some commands won't work in PowerShell
 - `touch` → `New-Item`
