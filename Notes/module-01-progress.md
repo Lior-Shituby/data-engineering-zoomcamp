@@ -1,4 +1,14 @@
 # Module 01 — Docker & Environment Setup
+
+## Session Log
+| Session | Date | Duration |
+|---------|------|----------|
+| Session 1 | 2026-06-15 | 1h 00m |
+| Session 2 | 2026-06-16 | 2h 50m |
+| Session 3 | 2026-06-17 | 1h 45m |
+| **Total** | | **5h 35m** |
+
+---
 **Date: 2026-06-15**
 
 ## Docker Basics

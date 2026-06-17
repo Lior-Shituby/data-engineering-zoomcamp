@@ -47,7 +47,7 @@ docker run -it --rm `
 
 ---
 
-# Module 01 — Session 4
+# Module 01 — Session 3
 **Date: 2026-06-17 | Start: 12:45 | End: 14:30 | Duration: 1h 45m**
 
 ## What Was Covered
