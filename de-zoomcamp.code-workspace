@@ -1,0 +1,35 @@
+{
+  "folders": [
+    {
+      "name": "Pipeline",
+      "path": "pipeline"
+    },
+    {
+      "name": "Terraform (Infrastructure)",
+      "path": "terraform"
+    },
+    {
+      "name": "Notes",
+      "path": "Notes"
+    },
+    {
+      "name": "Workflow Docs",
+      "path": "Workflow"
+    },
+    {
+      "name": "Course Docs",
+      "path": "data-engineering-zoomcamps-doco"
+    },
+    {
+      "name": "Root",
+      "path": "."
+    }
+  ],
+  "settings": {
+    "explorer.fileNesting.enabled": true,
+    "explorer.fileNesting.patterns": {
+      "*.tf": "${capture}.tfvars, ${capture}.tfstate, outputs.tf, variables.tf, destroy.ps1",
+      "docker-compose.yaml": ".env, pgadmin-servers.json"
+    }
+  }
+}

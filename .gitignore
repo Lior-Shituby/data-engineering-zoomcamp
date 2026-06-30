@@ -1,5 +1,22 @@
-# Secrets
+# Secrets & credentials
 .env
+.env.*
+pgadmin-pgpass
+*-credentials.json
+*-key.json
+*.json.key
+service-account*.json
+*.pem
+*.p12
+*.pfx
+.gcp/
+
+# Terraform
+terraform/.terraform/
+terraform/*.tfstate
+terraform/*.tfstate.backup
+terraform/.terraform.lock.hcl
+terraform/*.tfvars
 
 # Python-generated files
 __pycache__/
