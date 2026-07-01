@@ -23,23 +23,32 @@ def infrastructure_menu():
         choice = questionary.select(
             "Infrastructure",
             choices=[
-                "Start services (docker compose up)",
-                "Start services (detached)",
-                "Stop services (docker compose down)",
+                "Start all services (detached)",
+                "Start all services (attached)",
+                "Start Kestra only",
+                "Stop services",
+                "Stop services + wipe volumes",
                 "Check running containers",
+                "Stream Kestra logs",
                 "Back",
             ],
         ).ask()
         if choice is None or choice == "Back":
             break
-        elif "detached" in choice:
+        elif choice == "Start all services (detached)":
             run("docker compose up -d")
-        elif "Start" in choice:
+        elif choice == "Start all services (attached)":
             run("docker compose up")
-        elif "Stop" in choice:
+        elif choice == "Start Kestra only":
+            run("docker compose up -d kestra")
+        elif choice == "Stop services":
             run("docker compose down")
-        elif "Check" in choice:
+        elif choice == "Stop services + wipe volumes":
+            run("docker compose down -v", confirm=True)
+        elif choice == "Check running containers":
             run("docker ps")
+        elif choice == "Stream Kestra logs":
+            run("docker compose logs -f kestra")
 
 
 def pipeline_menu():
@@ -50,6 +59,7 @@ def pipeline_menu():
                 "Run ingest (yellow taxi Jan 2021)",
                 "Connect to DB (pgcli)",
                 "Open pgAdmin (browser)",
+                "Open Kestra UI (browser)",
                 "Back",
             ],
         ).ask()
@@ -70,6 +80,10 @@ def pipeline_menu():
         elif "pgAdmin" in choice:
             webbrowser.open("http://localhost:8085")
             print("Opened pgAdmin in browser.")
+            input("\nPress Enter to continue...")
+        elif "Kestra" in choice:
+            webbrowser.open("http://localhost:8080")
+            print("Opened Kestra UI in browser.")
             input("\nPress Enter to continue...")
 
 
@@ -106,12 +120,21 @@ def cleanup_menu():
         elif "containers" in choice:
             run("docker container prune", confirm=True)
         elif "images" in choice:
+            print("\n WARNING: This removes ALL unused images, including Kestra (3.1GB re-download if removed).")
+            print("         Only proceed if you're sure you won't need them soon.\n")
             run("docker image prune -a", confirm=True)
         elif "volumes" in choice:
+            print("\n WARNING: This deletes all volume data — Postgres data, pgAdmin config, Kestra state.")
+            print("         Your database will be empty after this.\n")
             run("docker volume prune", confirm=True)
         elif "networks" in choice:
             run("docker network prune", confirm=True)
         elif "EVERYTHING" in choice:
+            print("\n WARNING: This removes ALL containers, images, volumes, and networks.")
+            print("         Includes the 3.1GB Kestra image and ALL database data.")
+            print("         Everything will need to be re-downloaded and re-set-up.\n")
+            if not questionary.confirm("Type 'yes' to confirm — are you absolutely sure?").ask():
+                continue
             run("docker system prune -a --volumes", confirm=True)
 
 

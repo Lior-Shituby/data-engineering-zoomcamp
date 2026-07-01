@@ -6,7 +6,7 @@ services:
       - POSTGRES_PASSWORD=root
       - POSTGRES_DB=ny_taxi
     volumes:
-      - ny_taxi_postgres_data:/var/lib/postgresql
+      - ny_taxi_postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
 
@@ -17,11 +17,26 @@ services:
       - PGADMIN_DEFAULT_PASSWORD=root
     volumes:
       - pgadmin_data:/var/lib/pgadmin
+      - ./pgadmin-servers.json:/pgadmin4/servers.json
+      - ./pgadmin-pgpass:/pgpass
     ports:
       - "8085:80"
 
+  kestra:
+    image: kestra/kestra:latest
+    pull_policy: missing
+    entrypoint: /bin/bash
+    command: -c 'export KESTRA_CONFIGURATION_SECRET=$(echo -n "mysecret" | base64) && /app/kestra server standalone'
+    volumes:
+      - kestra-data:/app/storage
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    depends_on:
+      - pgdatabase
+
 volumes:
   ny_taxi_postgres_data:
-    external: true
   pgadmin_data:
-    external: true
+  kestra-data:

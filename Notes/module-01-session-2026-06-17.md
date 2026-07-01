@@ -78,6 +78,18 @@ docker run -it --rm `
 - Volumes marked `external: true` to reuse existing named volumes (preserves data)
 - Ingest container must join the Compose network: `--network=learningdataengineering_default`
 
+### Docker Cleanup Reference
+- `docker ps -a` — list all containers (including stopped)
+- `docker container prune` — remove all stopped containers
+- `docker images` — list all images
+- `docker rmi <image>:<tag>` — remove a specific image
+- `docker image prune -a` — remove all unused images
+- `docker volume ls` — list all volumes
+- `docker volume rm <name>` — remove a specific volume
+- `docker volume prune` — remove all unused volumes
+- `docker network ls` — list all networks
+- `docker network prune` — remove unused networks
+- `docker system prune -a --volumes` — nuclear option, removes EVERYTHING
+
 ## What's Next
-- SQL refresher — join taxi trips with zone lookup table, run aggregation queries in pgAdmin
 - Terraform / GCP setup
